@@ -4,7 +4,7 @@ export default function() {
     let rows: any[] = [
         {name: 'Trym', points: 5},
         {name: 'Simen R', points: 3},
-        {name: 'Brian', points: 2},
+        {name: 'Simen L', points: 2},
     ]
     return (
         <TableContainer component={Paper}
