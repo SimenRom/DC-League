@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { FirebaseApp, getApps, initializeApp } from '@firebase/app';
+import { Firestore, getFirestore, doc, setDoc } from "firebase/firestore";
 import { Auth, getAuth, getRedirectResult, onAuthStateChanged, User, GoogleAuthProvider } from "firebase/auth";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -20,13 +21,15 @@ interface firebaseContext {
     firebaseApp?: FirebaseApp,
     auth?: Auth,
     user?: User,
-    userLoading: boolean
+    userLoading: boolean,
+    db?: Firestore
 }
 const context: firebaseContext = {
     firebaseApp: undefined,
     auth: undefined,
     user: undefined,
     userLoading: true,
+    db: undefined
 };
 export const firebaseContext = createContext(context);
 function getFirebaseApp(config = {...firebaseConfig}) {
@@ -43,9 +46,19 @@ export function FirebaseContextProvider({ children }: FirebaseContextProvider) {
     const [auth, setAuth] = useState<Auth>(getAuth(firebaseApp));
     const [user, setUser] = useState<User | null>();
     const [userLoading, setUserLoading] = useState<boolean>(true);
+    const [db, setDb] = useState<Firestore>(getFirestore(firebaseApp));
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (newUser) => {
             setUser(newUser);
+            if(newUser) {
+                const userRef = doc(db, 'users', newUser.uid);
+                setDoc(userRef, {
+                    displayName: newUser.displayName,
+                    email: newUser.email,
+                    photoURL: newUser.photoURL
+                }, { merge: true });
+            }
             setUserLoading(false);
         });
         return () => unsubscribe();
@@ -83,7 +96,8 @@ export function FirebaseContextProvider({ children }: FirebaseContextProvider) {
         firebaseApp: firebaseApp,
         auth: auth,
         user: user || undefined,
-        userLoading
+        userLoading,
+        db
     }
     return <firebaseContext.Provider value={firebaseContextProviderValues}>
     {children}

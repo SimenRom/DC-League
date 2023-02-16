@@ -1,13 +1,17 @@
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Chip, Avatar, Container } from "@mui/material";
-
-export default function() {
-    let rows = [
-        {activityName: 'Biljard', podium: ['Trym', 'Simen R', 'Simen L'], date: new Date('3. feb. 2023')},
-        {activityName: 'Curling', date: new Date('17. feb. 2023')},
-        {activityName: 'Paddel', date: new Date('19. aug. 2023')},
-        {activityName: 'Minigolf', date: new Date('15. sep. 2023')},
-        {activityName: 'Bowling', date: new Date('15. sep. 2023')},
-        {activityName: 'Go-Kart', date: new Date('5. dec. 2023')},
+import { ExpandMore } from "@mui/icons-material";
+import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Chip, Avatar, Container, Button } from "@mui/material";
+import { Activity } from "../DCLeagueTypes";
+interface Props {
+    setActivity: React.Dispatch<React.SetStateAction<Activity | null>>
+}
+export default function(props: Props) {
+    let rows: Activity[] = [
+        {activityID: 'biljard', activityName: 'Biljard', podium: ['Trym', 'Simen R', 'Simen L'], date: new Date('3. feb. 2023')},
+        {activityID: 'curling', activityName: 'Curling', date: new Date('17. feb. 2023')},
+        {activityID: 'padel', activityName: 'Padel', date: new Date('19. aug. 2023')},
+        {activityID: 'minigolf', activityName: 'Minigolf', date: new Date('15. sep. 2023')},
+        {activityID: 'bowling', activityName: 'Bowling', date: new Date('15. sep. 2023')},
+        {activityID: 'gokart', activityName: 'Go-Kart', date: new Date('5. dec. 2023')},
     ]
     return (
         <TableContainer component={Paper}
@@ -32,7 +36,9 @@ export default function() {
                      }}
                     >
                         <TableCell component="th" scope="row">
-                            {row.activityName}
+                            <Button variant="outlined" endIcon={<ExpandMore />} onClick={()=>{props.setActivity(row)}}>
+                                {row.activityName}
+                            </Button>
                         </TableCell>
                         <TableCell component="th" scope="row">
                             {row.podium ? (
@@ -50,7 +56,7 @@ export default function() {
                                 ): null}
                         </TableCell>
                         <TableCell component="th" scope="row" align="right">
-                            {row.date.toDateString()}
+                            {row.date instanceof Date ? row.date.toDateString() : row.date.toString()}
                         </TableCell>
                     </TableRow>
                 ))}
