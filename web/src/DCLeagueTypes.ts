@@ -4,7 +4,8 @@ export interface Activity {
     activityName: string,
     date: Date | Timestamp,
     activityID: string,
-    podium?: any[] // TODO: change to type Player[]
+    podium?: any[] // TODO: change to type Player[],
+    tournamentType?: 'brackets' | 'points',
 }
 export interface Player {
     PlayerID: string,
